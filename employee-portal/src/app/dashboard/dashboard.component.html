@@ -1,4 +1,48 @@
-<div class="wrap">
-  <h2>Employees Dashboard</h2>
-  <p>Logged in successfully. We’ll load employees here next.</p>
+<div class="container mt-4">
+  <div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="m-0">Employees Dashboard</h2>
+    <button class="btn btn-success btn-lg" (click)="addEmployee()">+ Add Employee</button>
+  </div>
+
+
+  <!-- Table -->
+  <table class="table table-bordered mt-3">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Salary</th>
+        <th>Joined Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let emp of employees">
+        <td>{{ emp.id }}</td>
+        <td>{{ emp.firstName }} {{ emp.lastName }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.department }}</td>
+        <td>{{ emp.salary }}</td>
+        <td>{{ emp.joinedDate }}</td>
+        <td>
+          <button class="btn btn-warning btn-sm me-2" (click)="updateEmployee(emp.id)">Update</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteEmployee(emp.id!)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="pagination-controls">
+    <button class="btn btn-primary me-2" (click)="prevPage()" [disabled]="page === 1">
+      Previous
+    </button>
+    <span>Page {{ page }}</span>
+    <button class="btn btn-primary ms-2" (click)="nextPage()">
+      Next
+    </button>
+  </div>
 </div>
