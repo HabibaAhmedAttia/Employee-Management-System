@@ -39,11 +39,13 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<EmployeeResponse>> update(@PathVariable Long id,
-                                                                @Valid @RequestBody EmployeeRequest employee) {
-        EmployeeResponse updated = service.update(id, employee);
-        return ResponseEntity.ok(ApiResponse.success("Employee updated successfully", updated));
+    public ResponseEntity<ApiResponse<EmployeeResponse>> update(
+            @PathVariable Long id,
+            @RequestBody EmployeeRequest employee) {
+        EmployeeResponse updatedEmployee = service.update(id, employee);
+        return ResponseEntity.ok(ApiResponse.success("Employee updated successfully", updatedEmployee));
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {

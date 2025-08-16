@@ -53,15 +53,17 @@ public class EmployeeService {
     public EmployeeResponse update(Long id, EmployeeRequest req) {
         Employee existing = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
-
-        existing.setFirstName(req.getFirstName());
-        existing.setLastName(req.getLastName());
-        existing.setEmail(req.getEmail());
-        existing.setDepartment(req.getDepartment());
-        existing.setSalary(req.getSalary());
-        if (repo.existsByEmail(req.getEmail())) {
-            throw new RuntimeException("Email already exists: " + req.getEmail());
+        if (req.getFirstName() != null) existing.setFirstName(req.getFirstName());
+        if (req.getLastName() != null) existing.setLastName(req.getLastName());
+        if (req.getEmail() != null) {
+            if (repo.existsByEmail(req.getEmail()) && !req.getEmail().equals(existing.getEmail())) {
+                throw new RuntimeException("Email already exists");
+            }
+            existing.setEmail(req.getEmail());
         }
+        if (req.getDepartment() != null) existing.setDepartment(req.getDepartment());
+        if (req.getSalary() != null) existing.setSalary(req.getSalary());
+
         Employee saved = repo.save(existing);
         return mapToResponse(saved);
     }
