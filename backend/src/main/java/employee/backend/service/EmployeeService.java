@@ -5,6 +5,9 @@ import employee.backend.dto.EmployeeResponse;
 import employee.backend.entity.Employee;
 import employee.backend.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +33,13 @@ public class EmployeeService {
         return mapToResponse(saved);
     }
 
-    public List<EmployeeResponse> getAll() {
-        return repo.findAll().stream()
+    public List<EmployeeResponse> getAll(Integer page) {
+
+        int pageNumber = (page != null && page > 0) ? page - 1 : 0;
+        int pageSize = 5;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Employee> employeePage = repo.findAll(pageable);
+        return employeePage.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }

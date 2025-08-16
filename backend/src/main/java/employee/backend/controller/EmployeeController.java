@@ -26,8 +26,9 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getAll() {
-        List<EmployeeResponse> employees = service.getAll();
+    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getAll(
+            @RequestParam(value = "page", required = false) Integer page) {
+        List<EmployeeResponse> employees = service.getAll(page);
         return ResponseEntity.ok(ApiResponse.success("Employees retrieved successfully", employees));
     }
 
