@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { AuthService } from '../auth/auth.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -16,7 +17,8 @@ export class DashboardComponent implements OnInit {
   page = 1;
 
   constructor(private employeeService: EmployeeService,
-    private router: Router   // ⬅️ هنا بنـ Inject الـ Router
+    private router: Router,
+    private auth: AuthService, 
   ) {}
 
   ngOnInit(): void {
@@ -52,13 +54,17 @@ export class DashboardComponent implements OnInit {
       const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(res.data);
       const wb: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Employees');
+
       const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       const blob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
       saveAs(blob, 'employees.xlsx');
     }
   });
 }
-
+  logout() {
+    this.auth.clearToken();
+    this.router.navigate(['/login']);
+  }
   updateEmployee(id: number) {
   this.router.navigate(['/employees/edit', id]);
 }
