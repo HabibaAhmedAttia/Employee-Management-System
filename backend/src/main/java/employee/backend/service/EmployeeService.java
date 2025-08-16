@@ -49,6 +49,12 @@ public class EmployeeService {
                 .map(this::mapToResponse)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
     }
+    public List<EmployeeResponse> getAllWithoutPagination() {
+        return repo.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
 
     public EmployeeResponse update(Long id, EmployeeRequest req) {
         Employee existing = repo.findById(id)
@@ -67,7 +73,6 @@ public class EmployeeService {
         Employee saved = repo.save(existing);
         return mapToResponse(saved);
     }
-
     public void delete(Long id) {
         Employee existing = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));

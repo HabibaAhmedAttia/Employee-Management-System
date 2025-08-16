@@ -46,7 +46,11 @@ public class EmployeeController {
         EmployeeResponse updatedEmployee = service.update(id, employee);
         return ResponseEntity.ok(ApiResponse.success("Employee updated successfully", updatedEmployee));
     }
-
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getAllEmployeesWithoutPagination() {
+        List<EmployeeResponse> employees = service.getAllWithoutPagination();
+        return ResponseEntity.ok(ApiResponse.success("All employees retrieved successfully", employees));
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {

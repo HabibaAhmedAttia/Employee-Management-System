@@ -42,6 +42,9 @@ updateEmployee(id: number, employee: Employee) {
   addEmployee(emp: Employee) {
   return this.http.post<{ success: boolean, data: Employee }>(`${this.baseUrl}`, emp);
 }
+  getAllEmployeesWithoutPagination() {
+  return this.http.get<{ success: boolean, data: Employee[] }>(`${this.baseUrl}/all`);
+}
 
 
   deleteEmployee(id: number): Observable<ApiResponse<void>> {
