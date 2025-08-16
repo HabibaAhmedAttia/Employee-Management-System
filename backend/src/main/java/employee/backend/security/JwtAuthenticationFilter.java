@@ -26,23 +26,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        String token = authHeader.substring(7);
-        String email = jwtUtil.getEmailFromToken(token);
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User user = userRepository.findByEmail(email).orElse(null);
-            if (user != null && jwtUtil.validateToken(token)) {
+        try {
+            String path = request.getRequestURI();
+            if (path.startsWith("/api/auth") || path.startsWith("/h2-console")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            final String authHeader = request.getHeader("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new RuntimeException("Invalid or missing token");
+            }
+            String token = authHeader.substring(7);
+            String email = jwtUtil.getEmailFromToken(token);
+            if (email == null || !jwtUtil.validateToken(token)) {
+                throw new RuntimeException("Invalid or expired token");
+            }
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                user.getEmail(), null, null);
+                        new UsernamePasswordAuthenticationToken(user.getEmail(), null, null);
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
+            filterChain.doFilter(request, response);
+        } catch (RuntimeException ex) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\":false,\"message\":\"You are not authorized\",\"data\":null}");
         }
-        filterChain.doFilter(request, response);
     }
 }

@@ -27,7 +27,7 @@ public class EmployeeService {
         emp.setDepartment(req.getDepartment());
         emp.setSalary(req.getSalary());
         if (repo.existsByEmail(req.getEmail())) {
-            throw new RuntimeException("Email already exists: " + req.getEmail());
+            throw new RuntimeException("Email already exists");
         }
         Employee saved = repo.save(emp);
         return mapToResponse(saved);
