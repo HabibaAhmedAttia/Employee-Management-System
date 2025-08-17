@@ -4,6 +4,7 @@ import employee.backend.dto.UserLoginRequest;
 import employee.backend.dto.UserRegisterRequest;
 import employee.backend.exception.ApiResponse;
 import employee.backend.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +21,10 @@ import java.util.Map;
 public class AuthController {
 
     private final UserService userService;
-
+    @Operation(
+            summary = "Register a new user",
+            description = "Creates a new user account. Provide a unique username, valid email, and password. Returns a success message if registration is successful."
+    )
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<?>> register(@Valid @RequestBody UserRegisterRequest request) {
         try {
@@ -30,7 +34,10 @@ public class AuthController {
             return ResponseEntity.badRequest().body(ApiResponse.error(ex.getMessage()));
         }
     }
-
+    @Operation(
+            summary = "Login a user",
+            description = "Authenticate a user using email and password. Returns a JWT token in case of successful login. Token must be used for accessing protected endpoints."
+    )
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody UserLoginRequest request) {
         try {
